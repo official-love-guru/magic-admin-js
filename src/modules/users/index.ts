@@ -2,7 +2,7 @@ import { BaseModule } from '../base-module';
 import { createApiKeyMissingError } from '../../core/sdk-exceptions';
 import { post, get } from '../../utils/rest';
 import { generateIssuerFromPublicAddress } from '../../utils/issuer';
-import { MagicUserMetadata } from '../../types';
+import { MagicMultiBlockChainMetadata, MagicUserMetadata } from '../../types';
 
 export class UsersModule extends BaseModule {
   // --- User logout endpoints
@@ -42,6 +42,26 @@ export class UsersModule extends BaseModule {
       email: data.email ?? null,
       oauthProvider: data.oauth_provider ?? null,
       phoneNumber: data.phone_number ?? null,
+    };
+  }
+
+  public async getMultiBlockchainMetadataByIssuer(
+    issuer: string,
+    walletType: string,
+  ): Promise<MagicMultiBlockChainMetadata> {
+    if (!this.sdk.secretApiKey) throw createApiKeyMissingError();
+
+    const data = await get<{
+      wallet_type: string | null;
+      public_address: string | null;
+    }>(`${this.sdk.apiBaseUrl}/v2/admin/auth/user/public/address/get`, this.sdk.secretApiKey, {
+      issuer,
+      wallet_type: walletType.toUpperCase(),
+    });
+
+    return {
+      walletType: data.wallet_type ?? null,
+      publicAddress: data.public_address ?? null,
     };
   }
 

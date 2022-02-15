@@ -9,3 +9,8 @@ export interface MagicUserMetadata {
   oauthProvider: string | null;
   phoneNumber: string | null;
 }
+
+export interface MagicMultiBlockChainMetadata {
+  walletType: string | null;
+  publicAddress: string | null;
+}
